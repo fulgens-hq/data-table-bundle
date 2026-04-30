@@ -10,9 +10,53 @@ The following themes are natively available in the bundle:
 
 - [`@KreyuDataTable/themes/bootstrap_5.html.twig`](https://github.com/Kreyu/data-table-bundle/blob/main/src/Resources/views/themes/bootstrap_5.html.twig) - integrates [Bootstrap 5](https://getbootstrap.com/docs/5.0/)
 - [`@KreyuDataTable/themes/tabler.html.twig`](https://github.com/Kreyu/data-table-bundle/blob/main/src/Resources/views/themes/tabler.html.twig) - integrates [Tabler UI Kit](https://tabler.io/)
+- [`@KreyuDataTable/themes/infitex.html.twig`](https://github.com/Kreyu/data-table-bundle/blob/main/src/Resources/views/themes/infitex.html.twig) - dense, design-token-driven look on top of Bootstrap 5 (see [Infitex theme](#infitex-theme))
 - [`@KreyuDataTable/themes/base.html.twig`](https://github.com/Kreyu/data-table-bundle/blob/main/src/Resources/views/themes/base.html.twig) - base HTML template
 
 By default, the [`@KreyuDataTable/themes/base.html.twig`](https://github.com/Kreyu/data-table-bundle/blob/main/src/Resources/views/themes/base.html.twig) theme is used.
+
+## Infitex theme
+
+The Infitex theme extends `bootstrap_5` and applies a dense, neutral skin keyed off CSS custom properties (`--kreyu-dt-infitex-*`). The Twig template only adds a single root class (`.kreyu-dt-infitex`) — every visual rule lives in `assets/styles/infitex.css` and can be re-skinned by overriding the variables in `:root` from your application, with no need to fork the theme.
+
+Enable the theme globally:
+
+```yaml
+# config/packages/kreyu_data_table.yaml
+kreyu_data_table:
+  defaults:
+    themes:
+      - '@KreyuDataTable/themes/infitex.html.twig'
+```
+
+Import the matching stylesheet from your application's asset entrypoint (e.g. AssetMapper, Webpack Encore):
+
+```js
+import '@kreyu/data-table-bundle/assets/styles/infitex.css';
+```
+
+If you also use the [responsive feature](responsive.md), pair it with the responsive variant instead:
+
+```yaml
+kreyu_data_table:
+  defaults:
+    themes:
+      - '@KreyuDataTable/themes/infitex_responsive.html.twig'
+```
+
+### Re-skinning
+
+Override any of the exposed CSS custom properties from your own stylesheet — the theme requires no fork:
+
+```css
+:root {
+  --kreyu-dt-infitex-primary: #c0392b;
+  --kreyu-dt-infitex-radius: 6px;
+  --kreyu-dt-infitex-font-family: 'Inter', sans-serif;
+}
+```
+
+The full list of variables is defined at the top of [`assets/styles/infitex.css`](https://github.com/Kreyu/data-table-bundle/blob/main/assets/styles/infitex.css).
 
 ## Icon themes
 

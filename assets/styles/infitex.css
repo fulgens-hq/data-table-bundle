@@ -1,0 +1,313 @@
+/*
+ * Infitex theme — visual layer for the @KreyuDataTable/themes/infitex.html.twig theme.
+ *
+ * Pairs with the Twig theme that adds .kreyu-dt-infitex on the data table root.
+ * All styling targets the BS5 markup produced by the parent theme via descendant
+ * selectors, scoped under .kreyu-dt-infitex so nothing leaks to the rest of the app.
+ *
+ * Re-skinning: override any of the --kreyu-dt-infitex-* custom properties in :root
+ * (or on .kreyu-dt-infitex) from the consuming application — no need to fork.
+ */
+
+:root {
+    --kreyu-dt-infitex-font-family: 'IBM Plex Sans Condensed', 'Helvetica Neue', Arial, sans-serif;
+    --kreyu-dt-infitex-font-size: 13px;
+    --kreyu-dt-infitex-color: #18253E;
+
+    --kreyu-dt-infitex-primary: #5075AF;
+    --kreyu-dt-infitex-primary-fg: #EAEFF3;
+    --kreyu-dt-infitex-border-color: #D1D9E3;
+    --kreyu-dt-infitex-radius: 2px;
+
+    --kreyu-dt-infitex-row-bg-odd: #F8F8F9;
+    --kreyu-dt-infitex-row-bg-even: #FFFFFF;
+    --kreyu-dt-infitex-row-bg-hover: #EAEFF3;
+    --kreyu-dt-infitex-row-bg-selected: #97A1AE;
+    --kreyu-dt-infitex-row-fg-selected: #FFFFFF;
+
+    --kreyu-dt-infitex-header-bg: #FFFFFF;
+    --kreyu-dt-infitex-header-fg: #18253E;
+    --kreyu-dt-infitex-header-border: #D1D9E3;
+
+    --kreyu-dt-infitex-action-bg: #EAEFF3;
+    --kreyu-dt-infitex-action-fg: #64747E;
+    --kreyu-dt-infitex-action-border: #D1D9E3;
+
+    --kreyu-dt-infitex-batch-bar-bg: #5075AF;
+    --kreyu-dt-infitex-batch-bar-fg: #FFFFFF;
+
+    --kreyu-dt-infitex-active-filter-bg: rgba(80, 117, 175, 0.1);
+    --kreyu-dt-infitex-active-filter-fg: #18253E;
+
+    --kreyu-dt-infitex-pagination-fg: #64747E;
+    --kreyu-dt-infitex-pagination-border: #D1D9E3;
+    --kreyu-dt-infitex-pagination-active-bg: var(--kreyu-dt-infitex-primary);
+    --kreyu-dt-infitex-pagination-active-fg: var(--kreyu-dt-infitex-primary-fg);
+}
+
+/* ===== Root scope ===== */
+.kreyu-dt-infitex {
+    font-family: var(--kreyu-dt-infitex-font-family);
+    font-size: var(--kreyu-dt-infitex-font-size);
+    color: var(--kreyu-dt-infitex-color);
+}
+
+/* No rounded corners on the datatable container (Infitex look). */
+.kreyu-dt-infitex,
+.kreyu-dt-infitex .card,
+.kreyu-dt-infitex .card-header,
+.kreyu-dt-infitex .card-body,
+.kreyu-dt-infitex .card-footer {
+    border-radius: 0 !important;
+}
+
+/* No grey card-header/footer background — ComUi has a flat transparent surround. */
+.kreyu-dt-infitex > .card-header,
+.kreyu-dt-infitex > .card-footer,
+.kreyu-dt-infitex > .card-body {
+    background-color: transparent;
+    border: 0;
+}
+
+/* ===== Table ===== */
+.kreyu-dt-infitex .table {
+    --bs-table-bg: var(--kreyu-dt-infitex-row-bg-even);
+    --bs-table-color: var(--kreyu-dt-infitex-color);
+    --bs-table-border-color: var(--kreyu-dt-infitex-border-color);
+    --bs-table-hover-bg: var(--kreyu-dt-infitex-row-bg-hover);
+    --bs-table-hover-color: var(--kreyu-dt-infitex-color);
+    margin-bottom: 0;
+}
+
+.kreyu-dt-infitex .table > thead {
+    background: var(--kreyu-dt-infitex-header-bg);
+    color: var(--kreyu-dt-infitex-header-fg);
+}
+
+.kreyu-dt-infitex .table > thead th {
+    height: 26px;
+    padding: 7px;
+    border-top: 1px solid var(--kreyu-dt-infitex-header-border);
+    border-bottom: 1px solid var(--kreyu-dt-infitex-header-border);
+    font-weight: 700;
+    text-transform: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.kreyu-dt-infitex .table > thead th > a,
+.kreyu-dt-infitex .table > thead th > span {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    line-height: 1.2;
+}
+
+/* Neutralize bootstrap_5's "active sort" border/color highlight (Infitex shows it via the arrow color only). */
+.kreyu-dt-infitex .table > thead th.border-primary,
+.kreyu-dt-infitex .table > thead th.text-primary {
+    border-color: var(--kreyu-dt-infitex-header-border) !important;
+    color: inherit !important;
+}
+
+.kreyu-dt-infitex .table > tbody > tr > td {
+    padding: 7px;
+    vertical-align: middle;
+}
+
+.kreyu-dt-infitex .table > tbody > tr:nth-of-type(odd) > * {
+    background: var(--kreyu-dt-infitex-row-bg-odd);
+}
+
+.kreyu-dt-infitex .table > tbody > tr:nth-of-type(even) > * {
+    background: var(--kreyu-dt-infitex-row-bg-even);
+}
+
+.kreyu-dt-infitex .table > tbody > tr:hover > * {
+    background: var(--kreyu-dt-infitex-row-bg-hover);
+}
+
+/* ===== Sort arrows (double-chevron, DataTables.js look) ===== */
+.kreyu-dt-infitex-sort-icon {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1;
+    gap: 1px;
+    color: color-mix(in srgb, var(--kreyu-dt-infitex-color) 35%, transparent);
+}
+
+.kreyu-dt-infitex-sort-icon svg {
+    display: block;
+}
+
+.kreyu-dt-infitex-sort-icon--asc svg:first-child {
+    color: var(--kreyu-dt-infitex-primary);
+}
+
+.kreyu-dt-infitex-sort-icon--desc svg:last-child {
+    color: var(--kreyu-dt-infitex-primary);
+}
+
+.kreyu-dt-infitex .kreyu-dt-infitex-th-active {
+    color: var(--kreyu-dt-infitex-primary);
+}
+
+/* ===== Action bar buttons (filter, export, personalize) ===== */
+.kreyu-dt-infitex .card-header .btn-primary {
+    background: var(--kreyu-dt-infitex-action-bg);
+    color: var(--kreyu-dt-infitex-action-fg);
+    border-color: var(--kreyu-dt-infitex-action-border);
+    border-radius: var(--kreyu-dt-infitex-radius);
+}
+
+.kreyu-dt-infitex .card-header .btn-primary:hover,
+.kreyu-dt-infitex .card-header .btn-primary:focus {
+    background: color-mix(in srgb, var(--kreyu-dt-infitex-action-bg) 92%, black);
+    color: var(--kreyu-dt-infitex-color);
+    border-color: color-mix(in srgb, var(--kreyu-dt-infitex-action-border) 92%, black);
+}
+
+/* ===== Active filter tags ===== */
+.kreyu-dt-infitex .card-body a.btn,
+.kreyu-dt-infitex .card-body .btn-outline-danger {
+    border-radius: var(--kreyu-dt-infitex-radius);
+}
+
+.kreyu-dt-infitex .card-body > .d-flex.flex-wrap > a:not(.btn-outline-danger) {
+    background: var(--kreyu-dt-infitex-active-filter-bg);
+    color: var(--kreyu-dt-infitex-active-filter-fg);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--kreyu-dt-infitex-radius);
+}
+
+/* ===== Batch action bar ===== */
+.kreyu-dt-infitex .card-header[data-kreyu--data-table-bundle--batch-target="batchActionBar"] {
+    background: var(--kreyu-dt-infitex-batch-bar-bg);
+    color: var(--kreyu-dt-infitex-batch-bar-fg);
+}
+
+.kreyu-dt-infitex .card-header[data-kreyu--data-table-bundle--batch-target="batchActionBar"] .card-title {
+    color: var(--kreyu-dt-infitex-batch-bar-fg);
+}
+
+.kreyu-dt-infitex .card-header[data-kreyu--data-table-bundle--batch-target="batchActionBar"] .btn-primary {
+    background: var(--kreyu-dt-infitex-primary-fg);
+    color: var(--kreyu-dt-infitex-primary);
+    border-color: var(--kreyu-dt-infitex-primary-fg);
+}
+
+/* ===== Pagination ===== */
+.kreyu-dt-infitex-pagination-counters {
+    padding: 0.5rem 0 0;
+    text-align: right;
+    color: var(--kreyu-dt-infitex-pagination-fg);
+    font-size: var(--kreyu-dt-infitex-font-size);
+}
+
+.kreyu-dt-infitex .pagination .page-link {
+    color: var(--kreyu-dt-infitex-pagination-fg);
+    border-color: var(--kreyu-dt-infitex-pagination-border);
+    border-radius: var(--kreyu-dt-infitex-radius);
+}
+
+.kreyu-dt-infitex .pagination .page-item.active .page-link {
+    background: var(--kreyu-dt-infitex-pagination-active-bg);
+    color: var(--kreyu-dt-infitex-pagination-active-fg);
+    border-color: var(--kreyu-dt-infitex-pagination-active-bg);
+}
+
+.kreyu-dt-infitex .pagination .page-item.disabled .page-link {
+    background: color-mix(in srgb, var(--kreyu-dt-infitex-pagination-border) 40%, white);
+    color: var(--kreyu-dt-infitex-pagination-border);
+}
+
+/* ===== Forms (filter form rows, search) ===== */
+.kreyu-dt-infitex .form-control,
+.kreyu-dt-infitex .form-select {
+    border-color: var(--kreyu-dt-infitex-border-color);
+    border-radius: var(--kreyu-dt-infitex-radius);
+}
+
+.kreyu-dt-infitex .form-control:focus,
+.kreyu-dt-infitex .form-select:focus {
+    border-color: var(--kreyu-dt-infitex-primary);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--kreyu-dt-infitex-primary) 20%, transparent);
+}
+
+/* ===== Per-page selector (in action bar, Infitex layout — pill, primary border) ===== */
+.kreyu-dt-infitex-per-page {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.kreyu-dt-infitex-per-page-label {
+    font-weight: bold;
+}
+
+.kreyu-dt-infitex-per-page form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.kreyu-dt-infitex-per-page-select {
+    width: 70px;
+    height: 25px;
+    padding: 0 10px;
+    border: 1px solid var(--kreyu-dt-infitex-primary);
+    border-radius: 15px;
+    background-color: #fff;
+    background-image: none;
+    color: var(--kreyu-dt-infitex-color);
+    font-family: inherit;
+    font-size: var(--kreyu-dt-infitex-font-size);
+    line-height: 1;
+    cursor: pointer;
+    appearance: auto;
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
+    box-shadow: none;
+}
+
+.kreyu-dt-infitex-per-page-select:focus {
+    outline: none;
+    border-color: var(--kreyu-dt-infitex-primary);
+    box-shadow: none;
+}
+
+/* ===== Search input (rounded pill, Infitex look) ===== */
+.kreyu-dt-infitex .card-header input[type="search"],
+.kreyu-dt-infitex .card-header input[type="text"][name*="search"] {
+    height: 30px;
+    padding: 0 0.85rem;
+    border: 1px solid var(--kreyu-dt-infitex-border-color);
+    border-radius: 15px;
+    background-color: rgba(24, 37, 62, 0.05);
+}
+
+/* ===== Modals (export / personalization) ===== */
+.kreyu-dt-infitex + .modal .modal-content,
+.modal[id$="__modal"] .modal-content {
+    border-radius: var(--kreyu-dt-infitex-radius);
+}
+
+/* ===== Responsive collapsible rows (when paired with infitex_responsive theme) ===== */
+.kreyu-dt-infitex .kreyu-dt-collapsible-row > td {
+    background: var(--kreyu-dt-infitex-row-bg-odd);
+}
+
+.kreyu-dt-infitex .kreyu-dt-collapsible-row dt {
+    color: var(--kreyu-dt-infitex-action-fg);
+}
+
+.kreyu-dt-infitex .kreyu-dt-toggle-btn {
+    color: var(--kreyu-dt-infitex-primary);
+}

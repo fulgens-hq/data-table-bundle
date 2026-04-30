@@ -1,0 +1,34 @@
+{% extends '@KreyuDataTable/themes/infitex.html.twig' %}
+{% use '@KreyuDataTable/themes/_responsive.html.twig' with
+    kreyu_data_table_attributes as _responsive_kreyu_data_table_attributes,
+    table_head_row as _responsive_table_head_row,
+    table_body_value_row as _responsive_table_body_value_row
+%}
+
+{# Override kreyu_data_table to combine the Infitex root class with responsive scaffolding (collapsible rows). #}
+{% block kreyu_data_table %}
+    {% set stimulus_controllers = ['kreyu--data-table-bundle--state'] %}
+
+    {% if responsive_enabled|default(false) %}
+        {% set stimulus_controllers = stimulus_controllers|merge(['kreyu--data-table-bundle--responsive']) %}
+    {% endif %}
+
+    {% if has_batch_actions %}
+        {% set stimulus_controllers = stimulus_controllers|merge(['kreyu--data-table-bundle--batch']) %}
+    {% endif %}
+
+    <turbo-frame id="kreyu_data_table_{{ name }}" target="_top">
+        <div class="kreyu-dt-infitex{% if responsive_enabled|default(false) %} kreyu-dt-responsive-pending{% endif %}" {{ block('kreyu_data_table_attributes', theme) }}>
+            {{ block('action_bar', theme) }}
+            {{ block('table', theme) }}
+
+            {% if pagination_enabled %}
+                {{ data_table_pagination(pagination) }}
+            {% endif %}
+        </div>
+    </turbo-frame>
+{% endblock %}
+
+{% block kreyu_data_table_attributes %}{{ responsive_enabled|default(false) ? block('_responsive_kreyu_data_table_attributes') : parent() }}{% endblock %}
+{% block table_head_row %}{{ responsive_enabled|default(false) ? block('_responsive_table_head_row') : parent() }}{% endblock %}
+{% block table_body_value_row %}{{ responsive_enabled|default(false) ? block('_responsive_table_body_value_row') : parent() }}{% endblock %}

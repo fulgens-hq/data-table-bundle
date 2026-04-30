@@ -1,0 +1,207 @@
+{% extends '@KreyuDataTable/themes/bootstrap_5.html.twig' %}
+
+{% trans_default_domain 'KreyuDataTable' %}
+
+{#
+    Infitex Theme
+    Adds a single root class (.kreyu-dt-infitex) to scope all visual overrides.
+    All styling lives in assets/styles/infitex.css and is keyed off CSS custom
+    properties (--kreyu-dt-infitex-*) so consuming applications can re-skin by
+    overriding the variables in :root, without forking this theme.
+#}
+{% block kreyu_data_table %}
+    {% set stimulus_controllers = ['kreyu--data-table-bundle--state'] %}
+
+    {% if has_batch_actions %}
+        {% set stimulus_controllers = stimulus_controllers|merge(['kreyu--data-table-bundle--batch']) %}
+    {% endif %}
+
+    {% if data_table.vars.is_async and not data_table.vars.is_request_from_turbo_frame %}
+        <turbo-frame id="kreyu_data_table_{{ name }}" src="{{ app.request.uri }}" loading="lazy">
+            <div class="kreyu-dt-infitex">
+                <progress style="width: 100%">{{ 'Loading'|trans({}, 'KreyuDataTable') }}</progress>
+            </div>
+        </turbo-frame>
+    {% else %}
+        <turbo-frame id="kreyu_data_table_{{ name }}" target="_top">
+            <div class="kreyu-dt-infitex" {{ block('kreyu_data_table_attributes', theme) }}>
+                {{ block('action_bar', theme) }}
+                {{ block('table', theme) }}
+
+                {% if pagination_enabled %}
+                    {{ data_table_pagination(pagination) }}
+                {% endif %}
+            </div>
+        </turbo-frame>
+    {% endif %}
+{% endblock %}
+
+{# ===== Action bar: integrate the per-page selector next to the search (Infitex layout). ===== #}
+{% block action_bar %}
+    {% set display_filter_action = filtration_enabled and filters|length > 0 and filtration_form.children|length > 0 %}
+    {% set display_export_action = exporting_enabled and exporters|length > 0 %}
+    {% set display_per_page = pagination_enabled and data_table.vars.pagination is defined and data_table.vars.per_page_choices|default([])|length > 0 %}
+
+    {% if title or actions is not empty or has_active_filters or display_filter_action or display_export_action or personalization_enabled or display_per_page or data_table.columnVisibilityGroups is not empty %}
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="card-title mb-0">
+                {% if translation_domain is not same as false %}
+                    {{ title|trans(title_translation_parameters, translation_domain) }}
+                {% else %}
+                    {{ title }}
+                {% endif %}
+            </h6>
+
+            <div class="card-actions">
+                <div class="d-flex flex-row gap-2 align-items-center">
+                    {{ block('column_visibility_group_selector', theme) }}
+
+                    {% if display_per_page %}
+                        <div class="kreyu-dt-infitex-per-page">
+                            {% with data_table.vars.pagination.vars %}
+                                {{ data_table_theme_block(data_table, 'pagination_per_page') }}
+                            {% endwith %}
+                        </div>
+                    {% endif %}
+
+                    {% if filtration_enabled and filtration_form and filtration_form.vars.search_fields|length > 0 %}
+                        <div>
+                            {{ data_table_theme_block(data_table, 'action_search') }}
+                        </div>
+                    {% endif %}
+
+                    {% if actions is not empty %}
+                        <div class="d-flex flex-row gap-1">
+                            {% for action in actions %}
+                                {{ data_table_action(action) }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if display_filter_action %}
+                        <div>
+                            {{ data_table_theme_block(data_table, 'action_filter') }}
+                        </div>
+                    {% endif %}
+
+                    {% if display_export_action %}
+                        <div>
+                            {{ data_table_theme_block(data_table, 'action_export') }}
+                            {{ data_table_theme_block(data_table, 'export_modal') }}
+                        </div>
+                    {% endif %}
+
+                    {% if personalization_enabled %}
+                        <div>
+                            {{ data_table_theme_block(data_table, 'action_personalize') }}
+                            {{ data_table_theme_block(data_table, 'personalization_modal') }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if filtration_enabled and filtration_form and filters|length > 0 %}
+            <div class="border-bottom collapse" id="{{ filtration_form.vars.id }}__collapse">
+                <div class="card-body">
+                    {{ data_table_filters_form(filtration_form) }}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if has_active_filters %}
+            <div class="card-body border-bottom">
+                {{ data_table_theme_block(data_table, 'active_filters') }}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if has_batch_actions %}
+        {{ data_table_theme_block(data_table, 'batch_action_bar') }}
+    {% endif %}
+{% endblock %}
+
+{# ===== Pagination footer: pagination on top, counters below right (Infitex layout). ===== #}
+{% block pagination_widget %}
+    <div class="card-footer">
+        <div class="kreyu-dt-infitex-pagination">
+            {% if page_count > 1 %}
+                <div class="d-flex justify-content-end">
+                    <div class="pagination">
+                        {{ block('pagination_controls', theme) }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="kreyu-dt-infitex-pagination-counters">
+                {{ block('pagination_counters', theme) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{# ===== Per-page: simplified markup for inline use in the action bar (no BS5 col wrapping). ===== #}
+{% block pagination_per_page %}
+    {% set choices = data_table.vars.per_page_choices %}
+
+    {% if choices is not empty %}
+        {{ block('pagination_per_page_message', theme) }}
+        {{ block('pagination_per_page_form', theme) }}
+    {% endif %}
+{% endblock %}
+
+{% block pagination_per_page_message %}
+    <span class="kreyu-dt-infitex-per-page-label">{{ 'Items per page'|trans({}, 'KreyuDataTable') }}</span>
+{% endblock %}
+
+{% block pagination_per_page_form %}
+    {% set form_attr = { 'data-turbo-frame': '_self', 'data-turbo-action': 'advance' }|merge(form_attr ?? {}) %}
+
+    <form{% with { attr: form_attr } %}{{ block('attributes') }}{% endwith %}>
+        {% if should_reset_to_first_page ?? true %}
+            <input type="hidden" name="{{ data_table.vars.page_parameter_name }}" value="1">
+        {% endif %}
+
+        <select
+            name="{{ data_table.vars.per_page_parameter_name }}"
+            onchange="this.form.requestSubmit()"
+            autocomplete="off"
+            class="kreyu-dt-infitex-per-page-select"
+        >
+            {% for choice in choices %}
+                <option value="{{ choice }}"{{ item_number_per_page == choice ? ' selected' }}>{{ choice }}</option>
+            {% endfor %}
+        </select>
+    </form>
+{% endblock %}
+
+{# ===== Counters: align right (under pagination), Infitex layout. ===== #}
+{% block pagination_counters %}
+    <div class="d-flex justify-content-end">
+        {% if total_item_count > 0 %}
+            <span>{{ block('pagination_counters_message', theme) }}</span>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{# ===== Sort arrows: double-chevron icon set (DataTables.js look). ===== #}
+{% block sort_arrow_none %}
+    <span class="kreyu-dt-infitex-sort-icon kreyu-dt-infitex-sort-icon--none" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L9.33 6H0.67L5 0z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0.67 0h8.66L5 6z"/></svg>
+    </span>
+{% endblock %}
+
+{% block sort_arrow_asc %}
+    <span class="kreyu-dt-infitex-sort-icon kreyu-dt-infitex-sort-icon--asc" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L9.33 6H0.67L5 0z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0.67 0h8.66L5 6z"/></svg>
+    </span>
+{% endblock %}
+
+{% block sort_arrow_desc %}
+    <span class="kreyu-dt-infitex-sort-icon kreyu-dt-infitex-sort-icon--desc" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M5 0L9.33 6H0.67L5 0z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M5 6L0.67 0h8.66L5 6z"/></svg>
+    </span>
+{% endblock %}
